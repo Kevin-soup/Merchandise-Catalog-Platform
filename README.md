@@ -2,7 +2,7 @@
 
 A full-stack merchandise catalog application built using a microservice architecture.
 
-The platform follows RESTful design principles. Services communicate over HTTP using JSON and expose independent CRUD endpoints for their respective domains.
+Services communicate over HTTP using JSON and expose independent CRUD endpoints for their respective domains.
 
 
 ## System Components
