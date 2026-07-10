@@ -1,79 +1,66 @@
-# Microservice Catalog App 
+# Merchandise Catalog Platform
 
-A simple full stack project consisting of a **Merchandise Catalog Website** (UI) and four microservices (**A, B, C, D**) behind a simple HTTP/JSON (REST) interface.
+A full-stack merchandise catalog application built using a microservice architecture.
 
-**Deployment-ready:** services use environment-based configuration and stateless REST endpoints and can be containerized and pushed to production with minimal changes.
+The platform follows RESTful design principles. Services communicate over HTTP using JSON and expose independent CRUD endpoints for their respective domains.
 
----
 
-## What’s Included
+## System Components
 
-### Main Program — Merchandise Catalog Website (UI)
-A user-facing website to browse products, search by name, filter by category, and view item details with images.
+### Main Program 
+- **Merchandise Catalog Website (UI)**
+- A user facing website to browse products, search by name, filter by category, and view item details with images.
+- Responsibilities: browse products, search by keyword, filter by category, display product images, and admin CRUD operations.
 
-Used for
-- Browsing a catalog of items (grid/list)
-- Keyword search and category filters
-- Displaying product images from the image service
-- (Admin-only) adding/updating/removing items via the catalog service
+### Microservice A 
+- **Announcement Banner**
+- A lightweight API for posting and retrieving short announcements used by the site.
+- Responsibilities: saving and retrieving a single announcement payload with optional expiration.
 
-> The dev server prints the local URL on start (see the UI subfolder’s README).
+### Microservice B 
+- **Admin Authorization**
+- Centralized admin identity and access control.
+- Responsibilities: authenticating admins, issuing/verifying tokens, and enforcing role-based permissions on protected actions.
 
----
+### Microservice C 
+- **Image Service**
+- Stores product images and serves originals + metadata.
+- Responsibilities: uploading images (admin-protected), streaming images to the UI, and exposing metadata.
 
-## Microservices
+### Microservice D
+- **Product Catalog Service**
+- Manages the product/item dataset.
+- Responsibilities: creating, listing, updating, and deleting products.
 
-### Microservice A — Announcement / Messaging API
-A lightweight API for posting and retrieving short announcements used by the site.
-- Used for: saving and retrieving a single announcement payload (e.g., banner text), with optional expiration.
-- Notes: minimal persistence; see service A’s README for base URL and details.
 
-### Microservice B — Admin Authorization Service
-Centralized admin identity and access control.
-- Base URL: http://localhost:4000
-- Used for: authenticating admins, issuing/verifying tokens, and enforcing role-based permissions on protected actions.
-
-### Microservice C — Image Service
-Stores product images and serves originals + metadata.
-- Base URL: http://localhost:4004
-- Used for: uploading images (admin-protected), streaming images to the UI, and exposing metadata (filename, MIME type, size, tags).
-
-### Microservice D — Product Catalog Service
-Manages the product/item dataset.
-- Base URL: http://localhost:4002
-- Used for: creating, listing, updating, and deleting products (name, price, description, image URL, category).
-
----
-
-## Architecture (at a glance)
+## Architecture
 ```
-[ Browser UI ]
-     │
-     ├── GET /items, GET /items/:id, search/filter  → D (Catalog)
-     ├── GET /images/:id (binary)                   → C (Image)
-     └── Admin actions (create/update/delete)       → D (Catalog) + B (Auth check)
+                          Browser UI
+                              │
+          ┌───────────────────┼───────────────────┐
+          │                   │                   │
+          ▼                   ▼                   ▼
+  Product Catalog      Image Service      Auth Service
+   (CRUD Products)    (Upload & Serve)   (Admin Verification)
+          │
+          │
+          ▼
+ Announcement Service
+   (Site Announcements)
 
-External/optional integration
-     └── Announcements                              → A
-
-Auth convention (admin-only routes):
-x-admin-token: authorized_admin
+Protected Operations
+────────────────────────────────────────────
+Admin → Auth Service → Catalog/Image Services
+Header: x-admin-token
 ```
----
 
-## Setup & Run (local)
 
-> Environment variables are provided per service (see each subfolder’s README).
+## Running Locally
 
-1) Install & run each service
-   npm install
-   check package.json for start scripts
+See each subfolder’s README for environment variable templates.
 
-2) Run the UI
-   npm install
-   npm run dev
-
----
-
-## Requesting & Receiving Data
-**Supports basic CRUD operations. Microservices communicate via HTTP requests adhering to RESTful practices.**
+Install dependencies and run each service
+```bash
+npm install
+check package.json for start scripts
+```
